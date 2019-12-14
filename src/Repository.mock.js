@@ -2,6 +2,7 @@ export class Repository {
   constructor() {
     this._bc = new BroadcastChannel('net.hochreiner.more-bookmarks');
     this._bc.onmessage = this._dispatch.bind(this);
+    this._bc.postMessage({type: 'broadcast', action: 'repositoryReady'});
   }
 
   _dispatch(event) {
