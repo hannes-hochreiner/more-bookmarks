@@ -21,6 +21,35 @@ Authentication will be done via AWS.
 
 # Technical details
 
+## Model
+
+### Tree
+
+  * _id: /trees/<uuid>; couchdb internal
+  * _rev: couchdb internal
+  * id: uuid
+  * name
+  * sharedWith: array of user ids
+  * groups: array of groups ids (the order of entries in the array is significant)
+  * bookmarks: array of bookmarks ids (the order of entries in the array is significant)
+
+### Group
+
+  * _id: /groups/<tree id>/<uuid>; couchdb internal
+  * _rev: couchdb internal
+  * id: uuid
+  * name
+  * groups: array of groups ids (the order of entries in the array is significant)
+  * bookmarks: array of bookmarks ids (the order of entries in the array is significant)
+  
+### Bookmark
+
+  * _id: /bookmarks/<tree id>/<uuid>; couchdb internal
+  * _rev: couchdb internal
+  * id: uuid
+  * name
+  * url
+
 ## Channel
 
 Messages are exchanges on a broadcast channel named "net.hochreiner.more-bookmarks".
@@ -50,12 +79,36 @@ Possible values and their associated additional fields are found below.
 
   * No additional fields.
 
-#### bookmarksByUserId (request)
+#### treesByUserId (request)
 
   * userId
 
-#### bookmarksByUserId (response)
+#### treesByUserId (response)
 
   * userId
+  * result (optional): an array of tree objects; can be empty
+  * error (optional): the error that occurred in retrieving the tree objects
+
+#### bookmarksByIds (request)
+
+  * treeId
+  * bookmarksIds: array of bookmark ids
+
+#### bookmarksByIds (response)
+
+  * treeId
+  * bookmarksIds: array of bookmark ids
   * result (optional): an array of bookmark objects; can be empty
+  * error (optional): the error that occurred in retrieving the bookmark objects
+
+#### groupsByIds (request)
+
+  * treeId
+  * groupIds: array of group ids
+
+#### groupsByIds (response)
+
+  * treeId
+  * groupIds: array of group ids
+  * result (optional): an array of group objects; can be empty
   * error (optional): the error that occurred in retrieving the bookmark objects

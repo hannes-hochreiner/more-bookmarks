@@ -38,6 +38,7 @@
     </v-app-bar>
 
     <v-content>
+      <TreeList/>
       <BookmarkList/>
     </v-content>
   </v-app>
@@ -45,12 +46,14 @@
 
 <script>
 import BookmarkList from './components/BookmarkList';
+import TreeList from './components/TreeList';
 
 export default {
   name: 'App',
 
   components: {
     BookmarkList,
+    TreeList
   },
 
   data: () => ({
