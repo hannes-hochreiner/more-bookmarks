@@ -28,25 +28,28 @@ Authentication will be done via AWS.
   * _id: /trees/<uuid>; couchdb internal
   * _rev: couchdb internal
   * id: uuid
+  * default: true | false
   * name
   * sharedWith: array of user ids
-  * groups: array of groups ids (the order of entries in the array is significant)
-  * bookmarks: array of bookmarks ids (the order of entries in the array is significant)
+  * groupIds: array of groups ids (the order of entries in the array is significant)
+  * bookmarkIds: array of bookmarks ids (the order of entries in the array is significant)
 
 ### Group
 
   * _id: /groups/<tree id>/<uuid>; couchdb internal
   * _rev: couchdb internal
   * id: uuid
+  * treeId: id of the tree
   * name
-  * groups: array of groups ids (the order of entries in the array is significant)
-  * bookmarks: array of bookmarks ids (the order of entries in the array is significant)
+  * groupIds: array of groups ids (the order of entries in the array is significant)
+  * bookmarkIds: array of bookmarks ids (the order of entries in the array is significant)
   
 ### Bookmark
 
   * _id: /bookmarks/<tree id>/<uuid>; couchdb internal
   * _rev: couchdb internal
   * id: uuid
+  * treeId: id of the tree
   * name
   * url
 

@@ -27,18 +27,11 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <TreeSelect/>
     </v-app-bar>
 
     <v-content>
-      <TreeList/>
+      <GroupList/>
       <BookmarkList/>
     </v-content>
   </v-app>
@@ -46,18 +39,17 @@
 
 <script>
 import BookmarkList from './components/BookmarkList';
-import TreeList from './components/TreeList';
+import GroupList from './components/GroupList';
+import TreeSelect from './components/TreeSelect';
 
 export default {
   name: 'App',
-
   components: {
     BookmarkList,
-    TreeList
+    TreeSelect,
+    GroupList
   },
-
   data: () => ({
-    //
-  }),
+  })
 };
 </script>

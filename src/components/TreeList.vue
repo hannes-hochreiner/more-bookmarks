@@ -14,14 +14,10 @@ export default {
     trees: []
   }),
   mounted: function() {
-    console.log('mounted');
-    let bc = new BroadcastChannel('net.hochreiner.more-bookmarks');
-    bc.onmessage = function(event) {
-      if (event.data.type == 'response' && event.data.action == 'treesByUserId') {
-        this.trees = event.data.result;
-      }
-    }.bind(this);
-    bc.postMessage({
+    this.$ps.subscribe({type: 'response', action: 'treesByUserId'}, function(data) {
+      this.trees = data.result;
+    }.bind(this));
+    this.$ps.publish({
       type: 'request',
       action: 'treesByUserId',
       id: '1',

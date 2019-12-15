@@ -1,5 +1,6 @@
 <template>
   <v-list>
+    <v-subheader>Bookmarks</v-subheader>
     <v-list-item v-for="bookmark in bookmarks" :key="bookmark.id" :href="bookmark.url">
       <v-list-item-content>
         <v-list-item-title v-text="bookmark.name"></v-list-item-title>
@@ -14,18 +15,21 @@ export default {
     bookmarks: []
   }),
   mounted: function() {
-    let bc = new BroadcastChannel('net.hochreiner.more-bookmarks');
-    bc.onmessage = function(event) {
-      if (event.data.type == 'response' && event.data.action == 'bookmarksByUserId') {
-        this.bookmarks = event.data.result;
-      }
-    }.bind(this);
-    bc.postMessage({
-      type: 'request',
-      action: 'bookmarksByUserId',
-      id: '1',
-      userId: '1'
-    });
+    this.$ps.subscribe({type: 'broadcast', action: 'selectedTreeChanged'}, this.updateBookmarks.bind(this));
+    this.$ps.subscribe({type: 'response', action: 'bookmarksByIds'}, function(data) {
+      this.bookmarks = data.result;
+    }.bind(this));
+  },
+  methods: {
+    updateBookmarks: function(data) {
+      console.log(data);
+      this.$ps.publish({
+        type: 'request',
+        action: 'bookmarksByIds',
+        bookmarkIds: data.selectedTree.bookmarkIds,
+        treeId: data.selectedTree.id
+      });
+    }
   }
 };
 </script>
