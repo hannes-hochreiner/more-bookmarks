@@ -4,7 +4,8 @@ import router from './router'
 import vuetify from './plugins/vuetify';
 
 import {default as uuid} from 'uuid/v4';
-import {PubSub} from './PubSub';
+import {PubSub, PubSubFactory} from './PubSub';
+import {ViewModelFactory} from './ViewModelFactory';
 import {MessageViewerConsole} from './MessageViewerConsole';
 import RepositoryWorker from 'worker-loader!./RepositoryWorker';
 
@@ -14,7 +15,7 @@ Vue.config.productionTip = false
 Vue.use((Vue) => {
   Vue.mixin({
     created: function() {
-      this.$ps = new PubSub('net.hochreiner.more-bookmarks', uuid);
+      this.$vmf = new ViewModelFactory(new PubSubFactory('net.hochreiner.more-bookmarks', uuid));
     }
   });
 });

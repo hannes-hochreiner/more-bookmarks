@@ -43,3 +43,14 @@ export class PubSub {
     this._bc.postMessage(obj);
   }
 }
+
+export class PubSubFactory {
+  constructor(channel, uuid) {
+    this._channel = channel;
+    this._uuid = uuid;
+  }
+
+  createInstance() {
+    return new PubSub(this._channel, this._uuid);
+  }
+}
