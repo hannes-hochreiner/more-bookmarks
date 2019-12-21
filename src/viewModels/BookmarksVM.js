@@ -6,6 +6,7 @@ export class BookmarksVM {
     this._groups = [];
     this._selectedGroup = null;
     this._bookmarks = [];
+    this._pathComponents = [];
 
     this._ps.subscribe({type: 'response', action: 'bookmarksByIds'}, function(data) {
       this._bookmarks = data.result;
@@ -15,9 +16,7 @@ export class BookmarksVM {
     }.bind(this));
     this._ps.subscribe({type: 'response', action: 'treesByUserId'}, function(data) {
       this._trees = data.result;
-      this._selectedTree = this._trees.find(function(elem) { return elem.default; });
-      this._requestGroups();
-      this._requestBookmarks();
+      this.selectedTreeChanged(this._trees.find(function(elem) { return elem.default; }));
     }.bind(this));
 
     this._ps.publish({
@@ -29,6 +28,7 @@ export class BookmarksVM {
 
     this.selectedTreeChanged = this.selectedTreeChanged.bind(this);
     this.selectedGroupChanged = this.selectedGroupChanged.bind(this);
+    this.selectedComponentChanged = this.selectedComponentChanged.bind(this);
   }
 
   get trees() {
@@ -47,8 +47,13 @@ export class BookmarksVM {
     return this._bookmarks;
   }
 
+  get pathComponents() {
+    return this._pathComponents;
+  }
+
   selectedTreeChanged(tree) {
     this._selectedTree = tree;
+    this._pathComponents = [this._selectedTree];
     this._selectedGroup = null;
     this._requestGroups();
     this._requestBookmarks();
@@ -56,6 +61,24 @@ export class BookmarksVM {
 
   selectedGroupChanged(group) {
     this._selectedGroup = group;
+    this._pathComponents.push(group);
+    this._requestGroups();
+    this._requestBookmarks();
+  }
+
+  selectedComponentChanged(component) {
+    let idx = this._pathComponents.findIndex(function(elem) {
+      return elem.id === component.id;
+    });
+
+    this._pathComponents.splice(idx + 1, this._pathComponents.length - 1 - idx);
+
+    if (idx == 0) {
+      this._selectedGroup = null;
+    } else {
+      this._selectedGroup = component;
+    }
+
     this._requestGroups();
     this._requestBookmarks();
   }
