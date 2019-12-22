@@ -1,5 +1,6 @@
 export class Repository {
-  constructor(pubsub) {
+  constructor(pubsub, uuid) {
+    this._uuid = uuid;
     this._trees = [
       {_id: '/tree/1', _rev: 1, type: 'tree', default: false, sharedWith: ['1'], id: '1', name: 'tree 1', groupIds: ['2', '3'], bookmarkIds: ['2', '1']},
       {_id: '/tree/2', _rev: 1, type: 'tree', default: false, sharedWith: ['2'], id: '2', name: 'tree 2', groupIds: [], bookmarkIds: []},
@@ -18,12 +19,43 @@ export class Repository {
       {_id: '/bookmark/3/4', _rev: 1, type: 'bookmark', id: '4', treeId: '3', name: 'bm 4', url: 'http://hochreiner.net'},
       {_id: '/bookmark/3/5', _rev: 1, type: 'bookmark', id: '5', treeId: '3', name: 'bm 5', url: 'http://hochreiner.net'}
     ];
+    this._generateParents();
     this._ps = pubsub;
+    this._ps.subscribe({type: 'request', action: 'parentByGroupIdTreeId'}, this._parentByGroupIdTreeId.bind(this));
     this._ps.subscribe({type: 'request', action: 'treesByUserId'}, this._treesByUserId.bind(this));
     this._ps.subscribe({type: 'request', action: 'bookmarksByIds'}, this._bookmarksByIds.bind(this));
     this._ps.subscribe({type: 'request', action: 'groupsByIds'}, this._groupsByIds.bind(this));
     this._ps.subscribe({type: 'request', action: 'persistObjects'}, this._persistObjects.bind(this));
+    this._ps.subscribe({type: 'request', action: 'groupByIdTreeId'}, this._groupByIdTreeId.bind(this));
     this._ps.publish({type: 'broadcast', action: 'repositoryReady'});
+  }
+
+  _parentByGroupIdTreeId(req) {
+    req.type = 'response';
+    req.result = this._parents.find(elem => elem.id == `/parent/${req.treeId}/${req.groupId}`).parent;
+    this._ps.publish(req);
+  }
+
+  _generateParents() {
+    this._parents = this._trees.concat(this._groups).reduce(function(prev, curr) {
+      for (let idx in curr.groupIds) {
+        let groupId = curr.groupIds[idx];
+        let treeId = curr.treeId || curr.id;
+
+        prev.push({
+          id: `/parent/${treeId}/${groupId}`,
+          parent: curr
+        });
+      }
+
+      return prev;
+    }, []);
+  }
+
+  _groupByIdTreeId(req) {
+    req.type = 'response';
+    req.result = this._groups.find(elem => elem.id == req.groupId && elem.treeId == req.treeId);
+    this._ps.publish(req);
   }
 
   _treesByUserId(req) {
@@ -79,6 +111,8 @@ export class Repository {
         container.splice(this._trees.findIndex(elem => elem.id == obj.id), 1, obj);
       }
     }
+
+    this._generateParents();
 
     req.type = 'response';
     this._ps.publish(req);

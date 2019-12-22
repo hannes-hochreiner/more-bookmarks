@@ -41,7 +41,8 @@ export class PubSub {
 
   oneshot(obj) {
     return new Promise(function(resolve, reject) {
-      let token = this.subscribe({type: 'response', action: obj.action, id: obj.id}, function(res) {
+      let id = this._uuid();
+      let token = this.subscribe({type: 'response', id: id, action: obj.action}, function(res) {
         this.unsubscribe(token);
 
         if (res.error) {
@@ -51,6 +52,8 @@ export class PubSub {
         }
       }.bind(this));
 
+      obj.id = id;
+      obj.type = 'request';
       this.publish(obj);
     }.bind(this));
   }

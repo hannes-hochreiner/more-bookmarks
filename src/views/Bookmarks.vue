@@ -19,11 +19,10 @@
       />
     </v-content>
     <v-content v-else>
-      <PathComponents
-        :components="vm.pathComponents"
-        @selected-component-changed="vm.selectedComponentChanged"
-      />
       <v-toolbar>
+        <v-btn icon v-if="vm.parent" :to="vm.parent.type == 'tree' ? `/tree/${vm.parent.id}` : `/tree/${vm.parent.treeId}/group/${vm.parent.id}`">
+          <v-icon>mdi-arrow-up</v-icon>
+        </v-btn>
         <v-toolbar-title>{{vm.title}}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-progress-circular
@@ -70,15 +69,13 @@
 import TreeSelect from '../components/TreeSelect.vue'
 import GroupList from '../components/GroupList.vue'
 import BookmarkList from '../components/BookmarkList.vue'
-import PathComponents from '../components/PathComponents.vue'
 
 export default {
   name: 'bookmarks',
   components: {
     GroupList,
     BookmarkList,
-    TreeSelect,
-    PathComponents
+    TreeSelect
   },
   data: function() {
     return {
@@ -88,10 +85,13 @@ export default {
   created: function() {
     this.vm = this.$vmf.createViewModel('bookmarks', this.$route.params);
   },
-  beforeRouteUpdate: function(to, from, next) {
-    console.log(to);
-    console.log(from);
-    next();
+  watch: {
+    '$route': 'parametersChanged'
+  },
+  methods: {
+    parametersChanged: function(to) {
+      this.vm.parametersChanged(to.params);
+    }
   }
 }
 </script>

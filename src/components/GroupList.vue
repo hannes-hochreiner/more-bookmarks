@@ -4,7 +4,7 @@
       two-line
       v-for="(group, idx) in groups"
       :key="group.id"
-      @click="mode == 'view' ? $emit('selected-group-changed', group) : null"
+      :to="`/tree/${group.treeId}/group/${group.id}`"
     >
       <v-list-item-icon>
         <v-icon>mdi-folder</v-icon>
