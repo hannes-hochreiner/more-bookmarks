@@ -1,13 +1,14 @@
 import {BookmarksVM} from './viewModels/BookmarksVM';
 
 export class ViewModelFactory {
-  constructor(psf) {
+  constructor(psf, uuid) {
     this._psf = psf;
+    this._uuid = uuid;
   }
 
   createViewModel(className) {
     if (className === 'bookmarks') {
-      return new BookmarksVM(this._psf.createInstance());
+      return new BookmarksVM(this._psf.createInstance(), this._uuid);
     }
   }
 }

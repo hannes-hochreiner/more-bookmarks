@@ -1,12 +1,14 @@
 export class BookmarksVM {
-  constructor(ps) {
+  constructor(ps, uuid) {
     this._ps = ps;
+    this._uuid = uuid;
     this._trees = [];
     this._selectedTree = null;
     this._groups = [];
     this._selectedGroup = null;
     this._bookmarks = [];
     this._pathComponents = [];
+    this._mode = 'view';
 
     this._ps.subscribe({type: 'response', action: 'bookmarksByIds'}, function(data) {
       this._bookmarks = data.result;
@@ -29,6 +31,11 @@ export class BookmarksVM {
     this.selectedTreeChanged = this.selectedTreeChanged.bind(this);
     this.selectedGroupChanged = this.selectedGroupChanged.bind(this);
     this.selectedComponentChanged = this.selectedComponentChanged.bind(this);
+    this.switchToReorderMode = this.switchToReorderMode.bind(this);
+    this.ok = this.ok.bind(this);
+    this.cancel = this.cancel.bind(this);
+    this.moveGroupUp = this.moveGroupUp.bind(this);
+    this.moveGroupDown = this.moveGroupDown.bind(this);
   }
 
   get trees() {
@@ -49,6 +56,119 @@ export class BookmarksVM {
 
   get pathComponents() {
     return this._pathComponents;
+  }
+
+  get title() {
+    if (this._selectedGroup) {
+      return this._selectedGroup.name;
+    }
+
+    if (this._selectedTree) {
+      return this._selectedTree.name;
+    }
+
+    return '';
+  }
+
+  get mode() {
+    return this._mode;
+  }
+
+  moveGroupUp(group) {
+    let container = this._selectedGroup || this._selectedTree;
+    
+    if (!container) {
+      return;
+    }
+    
+    let grpIdx = container.groupIds.findIndex(elem => {
+      return elem == group.id;
+    });
+    
+    if (grpIdx < 1) {
+      return;
+    }
+
+    container.groupIds = this._moveElementAtIndexUp(container.groupIds, grpIdx);
+    this._groups = this._moveElementAtIndexUp(this._groups, grpIdx);
+  }
+
+  moveGroupDown(group) {
+    let container = this._selectedGroup || this._selectedTree;
+    
+    if (!container) {
+      return;
+    }
+    
+    let grpIdx = container.groupIds.findIndex(elem => {
+      return elem == group.id;
+    });
+    
+    if (grpIdx >= container.groupIds - 1) {
+      return;
+    }
+
+    container.groupIds = this._moveElementAtIndexUp(container.groupIds, grpIdx + 1);
+    this._groups = this._moveElementAtIndexUp(this._groups, grpIdx + 1);
+  }
+
+  _moveElementAtIndexUp(arr, idx) {
+    if (idx < 1) {
+      return arr;
+    }
+
+    let res = [];
+
+    for (let arrIdx in arr) {
+      if (arrIdx == idx - 1) {
+        res.push(arr[idx]);
+      } else if (arrIdx == idx) {
+        res.push(arr[idx - 1]);
+      } else {
+        res.push(arr[arrIdx]);
+      }
+    }
+
+    return res;
+  }
+
+  ok() {
+    if (this._mode == 'reorder') {
+      let container = this._selectedGroup || this._selectedTree;
+      let requestId = this._uuid();
+      let token = this._ps.subscribe({
+        type: 'response',
+        action: 'persistObjects',
+        id: requestId
+      }, function(res) {
+        this._ps.unsubscribe(token);
+
+        if (this._selectedGroup) {
+          this._selectedGroup = res.objects[0];
+        } else if (this._selectedTree) {
+          this._selectedTree = res.objects[0];
+        }
+
+        this._mode = 'view';
+      }.bind(this));
+
+      this._mode = 'working';
+
+      this._ps.publish({
+        type: 'request',
+        action: 'persistObjects',
+        id: requestId,
+        objects: [container]
+      });
+    }
+  }
+
+  cancel() {
+    this._mode = 'view';
+  }
+
+  switchToReorderMode() {
+    this._mode = 'reorder';
   }
 
   selectedTreeChanged(tree) {

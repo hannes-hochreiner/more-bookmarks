@@ -15,7 +15,7 @@ Vue.config.productionTip = false
 Vue.use((Vue) => {
   Vue.mixin({
     created: function() {
-      this.$vmf = new ViewModelFactory(new PubSubFactory('net.hochreiner.more-bookmarks', uuid));
+      this.$vmf = new ViewModelFactory(new PubSubFactory('net.hochreiner.more-bookmarks', uuid), uuid);
     }
   });
 });
