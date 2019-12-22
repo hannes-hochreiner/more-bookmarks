@@ -39,6 +39,22 @@ export class PubSub {
     delete this._subs[token];
   }
 
+  oneshot(obj) {
+    return new Promise(function(resolve, reject) {
+      let token = this.subscribe({type: 'response', action: obj.action, id: obj.id}, function(res) {
+        this.unsubscribe(token);
+
+        if (res.error) {
+          reject(res);
+        } else {
+          resolve(res);
+        }
+      }.bind(this));
+
+      this.publish(obj);
+    }.bind(this));
+  }
+
   publish(obj) {
     this._bc.postMessage(obj);
   }

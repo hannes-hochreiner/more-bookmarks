@@ -5,11 +5,9 @@ import Bookmarks from '../views/Bookmarks.vue'
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/',
-    name: 'bookmarks',
-    component: Bookmarks
-  },
+  {path: '/', component: Bookmarks},
+  {path: '/tree/:treeId', component: Bookmarks},
+  {path: '/tree/:treeId/group/:groupId', component: Bookmarks},
   {
     path: '/about',
     name: 'about',

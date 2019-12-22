@@ -6,9 +6,9 @@ export class ViewModelFactory {
     this._uuid = uuid;
   }
 
-  createViewModel(className) {
+  createViewModel(className, parameters) {
     if (className === 'bookmarks') {
-      return new BookmarksVM(this._psf.createInstance(), this._uuid);
+      return new BookmarksVM(this._psf.createInstance(), this._uuid, parameters);
     }
   }
 }

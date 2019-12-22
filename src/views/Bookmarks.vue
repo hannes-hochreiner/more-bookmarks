@@ -13,7 +13,12 @@
       />
     </v-app-bar>
 
-    <v-content>
+    <v-content v-if="vm.mode == 'init'" align="center">
+      <v-progress-circular
+        indeterminate
+      />
+    </v-content>
+    <v-content v-else>
       <PathComponents
         :components="vm.pathComponents"
         @selected-component-changed="vm.selectedComponentChanged"
@@ -81,7 +86,12 @@ export default {
     };
   },
   created: function() {
-    this.vm = this.$vmf.createViewModel('bookmarks');
+    this.vm = this.$vmf.createViewModel('bookmarks', this.$route.params);
+  },
+  beforeRouteUpdate: function(to, from, next) {
+    console.log(to);
+    console.log(from);
+    next();
   }
 }
 </script>

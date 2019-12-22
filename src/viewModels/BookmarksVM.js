@@ -1,5 +1,5 @@
 export class BookmarksVM {
-  constructor(ps, uuid) {
+  constructor(ps, uuid, parameters) {
     this._ps = ps;
     this._uuid = uuid;
     this._trees = [];
@@ -8,7 +8,7 @@ export class BookmarksVM {
     this._selectedGroup = null;
     this._bookmarks = [];
     this._pathComponents = [];
-    this._mode = 'view';
+    this._mode = 'init';
 
     this._ps.subscribe({type: 'response', action: 'bookmarksByIds'}, function(data) {
       this._bookmarks = data.result;
@@ -16,17 +16,6 @@ export class BookmarksVM {
     this._ps.subscribe({type: 'response', action: 'groupsByIds'}, function(data) {
       this._groups = data.result;
     }.bind(this));
-    this._ps.subscribe({type: 'response', action: 'treesByUserId'}, function(data) {
-      this._trees = data.result;
-      this.selectedTreeChanged(this._trees.find(function(elem) { return elem.default; }));
-    }.bind(this));
-
-    this._ps.publish({
-      type: 'request',
-      action: 'treesByUserId',
-      id: '1',
-      userId: '1'
-    });
 
     this.selectedTreeChanged = this.selectedTreeChanged.bind(this);
     this.selectedGroupChanged = this.selectedGroupChanged.bind(this);
@@ -36,6 +25,29 @@ export class BookmarksVM {
     this.cancel = this.cancel.bind(this);
     this.moveGroupUp = this.moveGroupUp.bind(this);
     this.moveGroupDown = this.moveGroupDown.bind(this);
+
+    this.init(parameters);
+  }
+
+  async init(parameters) {
+    let res = await this._ps.oneshot({
+      type: 'request',
+      action: 'treesByUserId',
+      id: this._uuid(),
+      userId: '1'
+    });
+
+    this._trees = res.result;
+    this._selectedTree = this._trees.find(elem => elem.id == parameters.treeId);
+
+    if (!this._selectedTree) {
+      this.selectedTreeChanged(this._trees.find(function(elem) { return elem.default; }));
+      return;
+    }
+
+    this._requestGroups();
+    this._requestBookmarks();
+    this._mode = 'view';
   }
 
   get trees() {

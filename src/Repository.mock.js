@@ -31,6 +31,7 @@ export class Repository {
       type: 'response',
       action: req.action,
       userId: req.userId,
+      id: req.id,
       result: this._trees.filter(elem => elem.sharedWith.includes(req.userId))
     });
   }
