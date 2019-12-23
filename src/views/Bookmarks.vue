@@ -9,7 +9,7 @@
       <TreeSelect
         :trees="vm.trees"
         :selectedTree="vm.selectedTree"
-        @selected-tree-changed="vm.selectedTreeChanged"
+        @selected-tree-changed="selectedTreeChanged"
       />
     </v-app-bar>
 
@@ -54,7 +54,6 @@
       <GroupList
         :mode="vm.mode"
         :groups="vm.groups"
-        @selected-group-changed="vm.selectedGroupChanged"
         @move-group-up="vm.moveGroupUp"
         @move-group-down="vm.moveGroupDown"
       />
@@ -91,6 +90,9 @@ export default {
   methods: {
     parametersChanged: function(to) {
       this.vm.parametersChanged(to.params);
+    },
+    selectedTreeChanged: function(tree) {
+      this.$router.push(`/tree/${tree.id}`);
     }
   }
 }

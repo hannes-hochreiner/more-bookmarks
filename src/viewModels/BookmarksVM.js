@@ -10,8 +10,6 @@ export class BookmarksVM {
       this._groups = data.result;
     }.bind(this));
 
-    this.selectedTreeChanged = this.selectedTreeChanged.bind(this);
-    this.selectedGroupChanged = this.selectedGroupChanged.bind(this);
     this.switchToReorderMode = this.switchToReorderMode.bind(this);
     this.ok = this.ok.bind(this);
     this.cancel = this.cancel.bind(this);
@@ -40,8 +38,7 @@ export class BookmarksVM {
     this._selectedTree = this._trees.find(elem => elem.id == parameters.treeId);
 
     if (!this._selectedTree) {
-      this.selectedTreeChanged(this._trees.find(function(elem) { return elem.default; }));
-      return;
+      this._selectedTree = this._trees.find(function(elem) { return elem.default; });
     }
 
     if (parameters.groupId) {
@@ -61,7 +58,6 @@ export class BookmarksVM {
         treeId: this._selectedGroup.treeId
       });
 
-      console.log(res);
       this._parent = res.result;
     }
 
@@ -197,19 +193,6 @@ export class BookmarksVM {
 
   switchToReorderMode() {
     this._mode = 'reorder';
-  }
-
-  selectedTreeChanged(tree) {
-    this._selectedTree = tree;
-    this._selectedGroup = null;
-    this._requestGroups();
-    this._requestBookmarks();
-  }
-
-  selectedGroupChanged(group) {
-    this._selectedGroup = group;
-    this._requestGroups();
-    this._requestBookmarks();
   }
 
   _requestGroups() {
