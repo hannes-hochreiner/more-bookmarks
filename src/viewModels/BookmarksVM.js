@@ -18,6 +18,7 @@ export class BookmarksVM {
     this.parametersChanged = this.parametersChanged.bind(this);
     this.updateGroup = this.updateGroup.bind(this);
     this.createGroup = this.createGroup.bind(this);
+    this.createBookmark = this.createBookmark.bind(this);
 
     this.init(parameters);
   }
@@ -123,6 +124,30 @@ export class BookmarksVM {
       objects: [newGrp, container]
     });
     this.groups.unshift(res.objects[0]);
+    
+    if (res.objects[1].type == 'tree') {
+      this._selectedTree = res.objects[1];
+    } else if (res.objects[1].type == 'group') {
+      this._selectedGroup = res.objects[1];
+    }
+  }
+
+  async createBookmark(data) {
+    let id = this._uuid();
+    let bookmark = {
+      id: id,
+      type: 'bookmark',
+      name: data.name,
+      url: data.url,
+      treeId: this._selectedTree.id
+    };
+    let container = this._selectedGroup || this._selectedTree;
+    container.bookmarkIds.unshift(id);
+    let res = await this._ps.oneshot({
+      action: 'persistObjects',
+      objects: [bookmark, container]
+    });
+    this.bookmarks.unshift(res.objects[0]);
     
     if (res.objects[1].type == 'tree') {
       this._selectedTree = res.objects[1];

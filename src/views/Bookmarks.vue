@@ -26,12 +26,7 @@
         <v-toolbar-title>{{vm.title}}</v-toolbar-title>
         <v-spacer></v-spacer>
         <GroupCreateDialog v-if="vm.mode == 'view'" @create-group="vm.createGroup"/>
-        <v-btn
-          v-if="vm.mode == 'view'"
-          icon
-        >
-          <v-icon>mdi-bookmark-plus-outline</v-icon>
-        </v-btn>
+        <BookmarkCreateDialog v-if="vm.mode == 'view'" @create-bookmark="vm.createBookmark"/>
         <GroupEditDialog v-if="vm.mode == 'view' && vm.group" :group="vm.group" @update-group="vm.updateGroup"/>
         <v-progress-circular
           v-if="vm.mode == 'working'"
@@ -78,6 +73,7 @@ import GroupList from '../components/GroupList.vue'
 import BookmarkList from '../components/BookmarkList.vue'
 import GroupEditDialog from '../components/GroupEditDialog.vue'
 import GroupCreateDialog from '../components/GroupCreateDialog.vue'
+import BookmarkCreateDialog from '../components/BookmarkCreateDialog.vue'
 
 export default {
   name: 'bookmarks',
@@ -86,7 +82,8 @@ export default {
     BookmarkList,
     TreeSelect,
     GroupEditDialog,
-    GroupCreateDialog
+    GroupCreateDialog,
+    BookmarkCreateDialog
   },
   data: function() {
     return {
