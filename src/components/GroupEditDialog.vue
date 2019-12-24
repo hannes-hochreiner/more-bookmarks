@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" scrollable max-width="300px">
+  <v-dialog v-model="dialog" scrollable>
       <template v-slot:activator="{ on }">
         <v-btn icon v-on="on">
           <v-icon>mdi-pencil</v-icon>
