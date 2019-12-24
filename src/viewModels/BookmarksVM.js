@@ -243,6 +243,10 @@ export class BookmarksVM {
       treeId = this._selectedGroup.treeId;      
     }
 
+    if (groupIds.length == 0) {
+      return;
+    }
+
     this._ps.publish({
       type: 'request',
       action: 'groupsByIds',
@@ -260,6 +264,10 @@ export class BookmarksVM {
     } else {
       bookmarkIds = this._selectedGroup.bookmarkIds;
       treeId = this._selectedGroup.treeId;      
+    }
+
+    if (bookmarkIds.length == 0) {
+      return;
     }
 
     this._ps.publish({
