@@ -62,6 +62,7 @@
       />
       <BookmarkList
         :bookmarks="vm.bookmarks"
+        @update-bookmark="vm.updateBookmark"
       />
     </v-content>
   </div>

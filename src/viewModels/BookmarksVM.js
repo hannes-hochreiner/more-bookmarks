@@ -19,6 +19,7 @@ export class BookmarksVM {
     this.updateGroup = this.updateGroup.bind(this);
     this.createGroup = this.createGroup.bind(this);
     this.createBookmark = this.createBookmark.bind(this);
+    this.updateBookmark = this.updateBookmark.bind(this);
 
     this.init(parameters);
   }
@@ -99,6 +100,16 @@ export class BookmarksVM {
 
   get group() {
     return this._selectedGroup;
+  }
+
+  async updateBookmark(data) {
+    console.log(data);
+    let bookmark = data.bookmark;
+
+    bookmark.name = data.name;
+    bookmark.url = data.url;
+
+  await this._ps.oneshot({action: 'persistObjects', objects: [bookmark]});
   }
 
   async updateGroup(data) {
