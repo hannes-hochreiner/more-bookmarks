@@ -1,12 +1,12 @@
 <template>
-  <v-dialog v-model="dialog" scrollable max-width="300px">
+  <v-dialog v-model="dialog" scrollable>
       <template v-slot:activator="{ on }">
         <v-btn icon v-on="on">
-          <v-icon>mdi-pencil</v-icon>
+          <v-icon>mdi-folder-plus-outline</v-icon>
         </v-btn>
       </template>
       <v-card>
-        <v-card-title>Edit Group</v-card-title>
+        <v-card-title>Create Group</v-card-title>
         <v-divider></v-divider>
         <v-card-text>
           <v-text-field label="Name" v-model="name"></v-text-field>
@@ -16,7 +16,7 @@
           <v-btn icon @click="dialog = false">
             <v-icon>mdi-cancel</v-icon>
           </v-btn>
-          <v-btn icon @click="updateGroup">
+          <v-btn icon @click="createGroup">
             <v-icon>mdi-check</v-icon>
           </v-btn>
         </v-card-actions>
@@ -26,9 +26,6 @@
 <script>
 export default {
   name: 'GroupEditDialog',
-  props: [
-    'group',
-  ],
   data: function() {
     return {
       dialog: false,
@@ -43,10 +40,10 @@ export default {
   },
   methods: {
     updateValues: function() {
-      this.name = this.$props.group.name;
+      this.name = '';
     },
-    updateGroup: function() {
-      this.$emit('update-group', {
+    createGroup: function() {
+      this.$emit('create-group', {
         name: this.name,
       });
       this.dialog = false;

@@ -91,7 +91,7 @@ export class Repository {
       type: 'response',
       action: 'groupsByIds',
       treeId: req.treeId,
-      bookmarkIds: req.groupIds,
+      groupIds: req.groupIds,
       result : this._sortedFilter(this._groups, filter)
     });
   }
@@ -103,12 +103,17 @@ export class Repository {
 
       if (!obj._id) {
         obj._rev = 1;
-        obj._id = `/${obj.type}/${obj.id}`;
+
+        if (obj.type == 'tree') {
+          obj._id = `/${obj.type}/${obj.id}`;
+        } else {
+          obj._id = `/${obj.type}/${obj.treeId}/${obj.id}`;
+        }
 
         container.push(obj);
       } else {
         obj._rev++;
-        container.splice(this._trees.findIndex(elem => elem.id == obj.id), 1, obj);
+        container.splice(container.findIndex(elem => elem.id == obj.id), 1, obj);
       }
     }
 

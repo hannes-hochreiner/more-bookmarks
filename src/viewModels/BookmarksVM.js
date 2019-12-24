@@ -17,6 +17,7 @@ export class BookmarksVM {
     this.moveGroupDown = this.moveGroupDown.bind(this);
     this.parametersChanged = this.parametersChanged.bind(this);
     this.updateGroup = this.updateGroup.bind(this);
+    this.createGroup = this.createGroup.bind(this);
 
     this.init(parameters);
   }
@@ -101,9 +102,33 @@ export class BookmarksVM {
 
   async updateGroup(data) {
     this._selectedGroup.name = data.name;
-    await this._ps.oneshot({action: 'persistObjects', objects: [this._selectedGroup]});
     let res = await this._ps.oneshot({action: 'persistObjects', objects: [this._selectedGroup]});
     this._selectedGroup = res.objects[0];
+  }
+
+  async createGroup(data) {
+    let id = this._uuid();
+    let newGrp = {
+      id: id,
+      type: 'group',
+      name: data.name,
+      treeId: this._selectedTree.id,
+      groupIds: [],
+      bookmarkIds: []
+    };
+    let container = this._selectedGroup || this._selectedTree;
+    container.groupIds.unshift(id);
+    let res = await this._ps.oneshot({
+      action: 'persistObjects',
+      objects: [newGrp, container]
+    });
+    this.groups.unshift(res.objects[0]);
+    
+    if (res.objects[1].type == 'tree') {
+      this._selectedTree = res.objects[1];
+    } else if (res.objects[1].type == 'group') {
+      this._selectedGroup = res.objects[1];
+    }
   }
 
   moveGroupUp(group) {

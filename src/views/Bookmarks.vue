@@ -25,12 +25,7 @@
         </v-btn>
         <v-toolbar-title>{{vm.title}}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn
-          v-if="vm.mode == 'view'"
-          icon
-        >
-          <v-icon>mdi-folder-plus-outline</v-icon>
-        </v-btn>
+        <GroupCreateDialog v-if="vm.mode == 'view'" @create-group="vm.createGroup"/>
         <v-btn
           v-if="vm.mode == 'view'"
           icon
@@ -82,6 +77,7 @@ import TreeSelect from '../components/TreeSelect.vue'
 import GroupList from '../components/GroupList.vue'
 import BookmarkList from '../components/BookmarkList.vue'
 import GroupEditDialog from '../components/GroupEditDialog.vue'
+import GroupCreateDialog from '../components/GroupCreateDialog.vue'
 
 export default {
   name: 'bookmarks',
@@ -89,7 +85,8 @@ export default {
     GroupList,
     BookmarkList,
     TreeSelect,
-    GroupEditDialog
+    GroupEditDialog,
+    GroupCreateDialog
   },
   data: function() {
     return {
