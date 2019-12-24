@@ -16,6 +16,7 @@ export class BookmarksVM {
     this.moveGroupUp = this.moveGroupUp.bind(this);
     this.moveGroupDown = this.moveGroupDown.bind(this);
     this.parametersChanged = this.parametersChanged.bind(this);
+    this.updateGroup = this.updateGroup.bind(this);
 
     this.init(parameters);
   }
@@ -92,6 +93,17 @@ export class BookmarksVM {
 
   get parent() {
     return this._parent;
+  }
+
+  get group() {
+    return this._selectedGroup;
+  }
+
+  async updateGroup(data) {
+    this._selectedGroup.name = data.name;
+    await this._ps.oneshot({action: 'persistObjects', objects: [this._selectedGroup]});
+    let res = await this._ps.oneshot({action: 'persistObjects', objects: [this._selectedGroup]});
+    this._selectedGroup = res.objects[0];
   }
 
   moveGroupUp(group) {

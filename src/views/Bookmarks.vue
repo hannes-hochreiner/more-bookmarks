@@ -25,6 +25,19 @@
         </v-btn>
         <v-toolbar-title>{{vm.title}}</v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-btn
+          v-if="vm.mode == 'view'"
+          icon
+        >
+          <v-icon>mdi-folder-plus-outline</v-icon>
+        </v-btn>
+        <v-btn
+          v-if="vm.mode == 'view'"
+          icon
+        >
+          <v-icon>mdi-bookmark-plus-outline</v-icon>
+        </v-btn>
+        <GroupEditDialog v-if="vm.mode == 'view' && vm.group" :group="vm.group" @update-group="vm.updateGroup"/>
         <v-progress-circular
           v-if="vm.mode == 'working'"
           indeterminate
@@ -68,13 +81,15 @@
 import TreeSelect from '../components/TreeSelect.vue'
 import GroupList from '../components/GroupList.vue'
 import BookmarkList from '../components/BookmarkList.vue'
+import GroupEditDialog from '../components/GroupEditDialog.vue'
 
 export default {
   name: 'bookmarks',
   components: {
     GroupList,
     BookmarkList,
-    TreeSelect
+    TreeSelect,
+    GroupEditDialog
   },
   data: function() {
     return {
