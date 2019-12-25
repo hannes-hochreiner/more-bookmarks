@@ -17,6 +17,16 @@
           <v-chip small class="ma-2"><v-avatar left><v-icon>mdi-bookmark-outline</v-icon></v-avatar>{{group.bookmarkIds.length}}</v-chip>
         </v-list-item-subtitle>
       </v-list-item-content>
+      <v-list-item-action v-if="mode == 'view'">
+        <v-toolbar flat dense>
+          <ConfirmationDialog
+            title="Delete Group?"
+            :text="`Do you really want to delete the group '${group.name}' and all its sub-groups and bookmarks?`"
+            icon="mdi-delete"
+            @confirmed="$emit('delete-group', {group: group})"
+          />
+        </v-toolbar>
+      </v-list-item-action>
       <v-list-item-action v-if="mode == 'reorder'">
         <v-btn icon @click="$emit('move-group-up', group)" v-if="idx > 0">
           <v-icon>mdi-chevron-up</v-icon>
@@ -29,8 +39,13 @@
   </v-list>
 </template>
 <script>
+import ConfirmationDialog from './ConfirmationDialog';
+
 export default {
   name: 'GroupList',
+  components: {
+    ConfirmationDialog
+  },
   props: [
     'groups',
     'mode'

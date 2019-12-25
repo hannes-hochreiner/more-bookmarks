@@ -18,6 +18,7 @@ export class BookmarksVM {
     this.parametersChanged = this.parametersChanged.bind(this);
     this.updateGroup = this.updateGroup.bind(this);
     this.createGroup = this.createGroup.bind(this);
+    this.deleteGroup = this.deleteGroup.bind(this);
     this.createBookmark = this.createBookmark.bind(this);
     this.updateBookmark = this.updateBookmark.bind(this);
     this.deleteBookmark = this.deleteBookmark.bind(this);
@@ -101,6 +102,68 @@ export class BookmarksVM {
 
   get group() {
     return this._selectedGroup;
+  }
+
+  async deleteGroup(data) {
+    let container = this._selectedGroup || this._selectedTree;
+    let group = data.group;
+    let idx = container.groupIds.findIndex((elem) => elem == group.id);
+
+    container.groupIds.splice(idx, 1);
+
+    let res = await this._getSubgroupsBookmarks(group);
+    res.groups.push(group);
+
+    await this._ps.oneshot({action: 'persistObjects', objects: [container]});
+    await this._ps.oneshot({action: 'deleteObjects', objects: res.groups.concat(res.bookmarks)});
+    this._ps.publish({
+      type: 'broadcast',
+      action: 'userMessage',
+      message: {
+        type: 'success',
+        text: `Deleted group "${group.name}" including sub-groups and bookmarks.`
+      }
+    });
+    this.init({
+      treeId: this._selectedTree.id,
+      groupId: this._selectedGroup ? this._selectedGroup.id : null
+    });
+  }
+
+  async _getSubgroupsBookmarks(group) {
+    let res = {
+      groups: [],
+      bookmarks: []
+    };
+
+    if (group.bookmarkIds.length > 0) {
+      res.bookmarks = (await this._ps.oneshot({
+        action: 'bookmarksByIds',
+        bookmarkIds: group.bookmarkIds,
+        treeId: group.treeId
+      })).result;
+    }
+
+    if (group.groupIds.length == 0) {
+      return res;
+    }
+
+    res.groups = (await this._ps.oneshot({
+      action: 'groupsByIds',
+      groupIds: group.groupIds,
+      treeId: group.treeId
+    })).result;
+
+    let grps = res.groups;
+
+    for (let grpIdx in grps) {
+      let subRes = await this._getSubgroupsBookmarks(grps[grpIdx]);
+
+      res.groups = res.groups.concat(subRes.groups);
+      res.bookmarks = res.bookmarks.concat(subRes.bookmarks);
+    }
+
+    return res;
   }
 
   async deleteBookmark(data) {

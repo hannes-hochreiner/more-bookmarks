@@ -59,6 +59,7 @@
         :groups="vm.groups"
         @move-group-up="vm.moveGroupUp"
         @move-group-down="vm.moveGroupDown"
+        @delete-group="vm.deleteGroup"
       />
       <BookmarkList
         :bookmarks="vm.bookmarks"

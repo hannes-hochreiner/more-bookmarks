@@ -74,13 +74,10 @@ export class Repository {
       return `/bookmark/${req.treeId}/${elem}`;
     });
 
-    this._ps.publish({
-      type: 'response',
-      action: 'bookmarksByIds',
-      treeId: req.treeId,
-      bookmarkIds: req.bookmarkIds,
-      result : this._sortedFilter(this._bookmarks, filter)
-    });
+    req.type = 'response';
+    req.result = this._sortedFilter(this._bookmarks, filter);
+
+    this._ps.publish(req);
   }
 
   _groupsByIds(req) {
@@ -88,13 +85,10 @@ export class Repository {
       return `/group/${req.treeId}/${elem}`;
     });
 
-    this._ps.publish({
-      type: 'response',
-      action: 'groupsByIds',
-      treeId: req.treeId,
-      groupIds: req.groupIds,
-      result : this._sortedFilter(this._groups, filter)
-    });
+    req.type = 'response';
+    req.result = this._sortedFilter(this._groups, filter);
+
+    this._ps.publish(req);
   }
 
   _deleteObjects(req) {
