@@ -20,6 +20,7 @@ export class BookmarksVM {
     this.createGroup = this.createGroup.bind(this);
     this.createBookmark = this.createBookmark.bind(this);
     this.updateBookmark = this.updateBookmark.bind(this);
+    this.deleteBookmark = this.deleteBookmark.bind(this);
 
     this.init(parameters);
   }
@@ -102,6 +103,28 @@ export class BookmarksVM {
     return this._selectedGroup;
   }
 
+  async deleteBookmark(data) {
+    let container = this._selectedGroup || this._selectedTree;
+    let bookmark = data.bookmark;
+    let idx = container.bookmarkIds.findIndex((elem) => elem == bookmark.id);
+
+    container.bookmarkIds.splice(idx, 1);
+    await this._ps.oneshot({action: 'persistObjects', objects: [container]});
+    await this._ps.oneshot({action: 'deleteObjects', objects: [bookmark]});
+    this._ps.publish({
+      type: 'broadcast',
+      action: 'userMessage',
+      message: {
+        type: 'success',
+        text: `Deleted bookmark "${bookmark.name}".`
+      }
+    });
+    this.init({
+      treeId: this._selectedTree.id,
+      groupId: this._selectedGroup ? this._selectedGroup.id : null
+    });
+  }
+
   async updateBookmark(data) {
     let bookmark = data.bookmark;
 
@@ -114,12 +137,12 @@ export class BookmarksVM {
       action: 'userMessage',
       message: {
         type: 'success',
-        text: `Updated Bookmark "${bookmark.name}".`
+        text: `Updated bookmark "${bookmark.name}".`
       }
     });
     this.init({
       treeId: this._selectedTree.id,
-      groupId: this._selectedGroup.id
+      groupId: this._selectedGroup ? this._selectedGroup.id : null
     });
   }
 

@@ -63,6 +63,7 @@
       <BookmarkList
         :bookmarks="vm.bookmarks"
         @update-bookmark="vm.updateBookmark"
+        @delete-bookmark="vm.deleteBookmark"
       />
     </v-content>
   </div>

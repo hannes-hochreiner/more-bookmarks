@@ -16,9 +16,12 @@
       <v-list-item-action>
         <v-toolbar flat dense>
           <BookmarkEditDialog :bookmark="bookmark" @update-bookmark="$emit('update-bookmark', $event)"/>
-          <v-btn icon>
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
+          <ConfirmationDialog
+            title="Delete Bookmark?"
+            :text="`Do you really want to delete the bookmark '${bookmark.name}'?`"
+            icon="mdi-delete"
+            @confirmed="$emit('delete-bookmark', {bookmark: bookmark})"
+          />
         </v-toolbar>
       </v-list-item-action>
     </v-list-item>
@@ -26,11 +29,13 @@
 </template>
 <script>
 import BookmarkEditDialog from './BookmarkEditDialog';
+import ConfirmationDialog from './ConfirmationDialog';
 
 export default {
   name: 'BookmarkList',
   components: {
-    BookmarkEditDialog
+    BookmarkEditDialog,
+    ConfirmationDialog
   },
   props: [
     'bookmarks'

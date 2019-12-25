@@ -26,6 +26,7 @@ export class Repository {
     this._ps.subscribe({type: 'request', action: 'bookmarksByIds'}, this._bookmarksByIds.bind(this));
     this._ps.subscribe({type: 'request', action: 'groupsByIds'}, this._groupsByIds.bind(this));
     this._ps.subscribe({type: 'request', action: 'persistObjects'}, this._persistObjects.bind(this));
+    this._ps.subscribe({type: 'request', action: 'deleteObjects'}, this._deleteObjects.bind(this));
     this._ps.subscribe({type: 'request', action: 'groupByIdTreeId'}, this._groupByIdTreeId.bind(this));
     this._ps.publish({type: 'broadcast', action: 'repositoryReady'});
   }
@@ -94,6 +95,20 @@ export class Repository {
       groupIds: req.groupIds,
       result : this._sortedFilter(this._groups, filter)
     });
+  }
+
+  _deleteObjects(req) {
+    for (let idx in req.objects) {
+      let obj = req.objects[idx];
+      let container = this[`_${obj.type}s`];
+
+      container.splice(container.findIndex(elem => elem.id == obj.id), 1);
+    }
+
+    this._generateParents();
+
+    req.type = 'response';
+    this._ps.publish(req);
   }
 
   _persistObjects(req) {
