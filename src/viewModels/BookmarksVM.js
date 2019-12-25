@@ -103,13 +103,20 @@ export class BookmarksVM {
   }
 
   async updateBookmark(data) {
-    console.log(data);
     let bookmark = data.bookmark;
 
     bookmark.name = data.name;
     bookmark.url = data.url;
 
     await this._ps.oneshot({action: 'persistObjects', objects: [bookmark]});
+    this._ps.publish({
+      type: 'broadcast',
+      action: 'userMessage',
+      message: {
+        type: 'success',
+        text: `Updated Bookmark "${bookmark.name}".`
+      }
+    });
     this.init({
       treeId: this._selectedTree.id,
       groupId: this._selectedGroup.id
