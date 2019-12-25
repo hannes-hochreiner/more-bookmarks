@@ -54,7 +54,7 @@ export default {
         url: this.url,
         bookmark: this.bookmark
       });
-      this.dialog = false;
+      // this.dialog = false;
     },
   }
 };

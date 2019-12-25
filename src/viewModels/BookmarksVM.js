@@ -109,7 +109,11 @@ export class BookmarksVM {
     bookmark.name = data.name;
     bookmark.url = data.url;
 
-  await this._ps.oneshot({action: 'persistObjects', objects: [bookmark]});
+    await this._ps.oneshot({action: 'persistObjects', objects: [bookmark]});
+    this.init({
+      treeId: this._selectedTree.id,
+      groupId: this._selectedGroup.id
+    });
   }
 
   async updateGroup(data) {
