@@ -27,7 +27,6 @@
         <v-spacer></v-spacer>
         <GroupCreateDialog v-if="vm.mode == 'view'" @create-group="vm.createGroup"/>
         <BookmarkCreateDialog v-if="vm.mode == 'view'" @create-bookmark="vm.createBookmark"/>
-        <GroupEditDialog v-if="vm.mode == 'view' && vm.group" :group="vm.group" @update-group="vm.updateGroup"/>
         <v-progress-circular
           v-if="vm.mode == 'working'"
           indeterminate
@@ -60,6 +59,7 @@
         @move-group-up="vm.moveGroupUp"
         @move-group-down="vm.moveGroupDown"
         @delete-group="vm.deleteGroup"
+        @update-group="vm.updateGroup"
       />
       <BookmarkList
         :bookmarks="vm.bookmarks"
@@ -74,7 +74,6 @@
 import TreeSelect from '../components/TreeSelect.vue'
 import GroupList from '../components/GroupList.vue'
 import BookmarkList from '../components/BookmarkList.vue'
-import GroupEditDialog from '../components/GroupEditDialog.vue'
 import GroupCreateDialog from '../components/GroupCreateDialog.vue'
 import BookmarkCreateDialog from '../components/BookmarkCreateDialog.vue'
 
@@ -84,7 +83,6 @@ export default {
     GroupList,
     BookmarkList,
     TreeSelect,
-    GroupEditDialog,
     GroupCreateDialog,
     BookmarkCreateDialog
   },

@@ -210,9 +210,23 @@ export class BookmarksVM {
   }
 
   async updateGroup(data) {
-    this._selectedGroup.name = data.name;
-    let res = await this._ps.oneshot({action: 'persistObjects', objects: [this._selectedGroup]});
-    this._selectedGroup = res.objects[0];
+    let group = data.group;
+
+    group.name = data.name;
+
+    await this._ps.oneshot({action: 'persistObjects', objects: [group]});
+    this._ps.publish({
+      type: 'broadcast',
+      action: 'userMessage',
+      message: {
+        type: 'success',
+        text: `Updated group "${group.name}".`
+      }
+    });
+    this.init({
+      treeId: this._selectedTree.id,
+      groupId: this._selectedGroup ? this._selectedGroup.id : null
+    });
   }
 
   async createGroup(data) {

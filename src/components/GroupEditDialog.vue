@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" scrollable>
       <template v-slot:activator="{ on }">
-        <v-btn icon v-on="on">
+        <v-btn icon v-on="on" @click.prevent>
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
       </template>
@@ -48,8 +48,8 @@ export default {
     updateGroup: function() {
       this.$emit('update-group', {
         name: this.name,
+        group: this.group
       });
-      this.dialog = false;
     }
   }
 };

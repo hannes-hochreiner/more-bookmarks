@@ -19,6 +19,7 @@
       </v-list-item-content>
       <v-list-item-action v-if="mode == 'view'">
         <v-toolbar flat dense>
+          <GroupEditDialog :group="group" @update-group="$emit('update-group', $event)"/>
           <ConfirmationDialog
             title="Delete Group?"
             :text="`Do you really want to delete the group '${group.name}' and all its sub-groups and bookmarks?`"
@@ -40,10 +41,12 @@
 </template>
 <script>
 import ConfirmationDialog from './ConfirmationDialog';
+import GroupEditDialog from '../components/GroupEditDialog.vue'
 
 export default {
   name: 'GroupList',
   components: {
+    GroupEditDialog,
     ConfirmationDialog
   },
   props: [
