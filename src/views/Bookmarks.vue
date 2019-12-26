@@ -28,31 +28,11 @@
         <v-spacer></v-spacer>
         <GroupCreateDialog v-if="vm.mode == 'view'" @create-group="vm.createGroup"/>
         <BookmarkCreateDialog v-if="vm.mode == 'view'" @create-bookmark="vm.createBookmark"/>
+        <ReorderDialog v-if="vm.mode == 'view'" :groups="vm.groups" :bookmarks="vm.bookmarks" @reorder-groups-bookmarks="vm.reorderGroupsBookmarks"/>
         <v-progress-circular
           v-if="vm.mode == 'working'"
           indeterminate
         />
-        <v-btn
-          v-if="vm.mode == 'view'"
-          icon
-          @click="vm.switchToReorderMode"
-        >
-          <v-icon>mdi-swap-vertical</v-icon>
-        </v-btn>
-        <v-btn
-          v-if="vm.mode == 'reorder'"
-          icon
-          @click="vm.cancel"
-        >
-          <v-icon>mdi-cancel</v-icon>
-        </v-btn>
-        <v-btn
-          v-if="vm.mode == 'reorder'"
-          icon
-          @click="vm.ok"
-        >
-          <v-icon>mdi-check</v-icon>
-        </v-btn>
       </v-toolbar>
       <GroupList
         :mode="vm.mode"
@@ -77,6 +57,7 @@ import GroupList from '../components/GroupList.vue'
 import BookmarkList from '../components/BookmarkList.vue'
 import GroupCreateDialog from '../components/GroupCreateDialog.vue'
 import BookmarkCreateDialog from '../components/BookmarkCreateDialog.vue'
+import ReorderDialog from '../components/ReorderDialog.vue'
 
 export default {
   name: 'bookmarks',
@@ -85,7 +66,8 @@ export default {
     BookmarkList,
     TreeSelect,
     GroupCreateDialog,
-    BookmarkCreateDialog
+    BookmarkCreateDialog,
+    ReorderDialog
   },
   data: function() {
     return {

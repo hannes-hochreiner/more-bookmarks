@@ -10,9 +10,6 @@ export class BookmarksVM {
       this._groups = data.result;
     }.bind(this));
 
-    this.switchToReorderMode = this.switchToReorderMode.bind(this);
-    this.ok = this.ok.bind(this);
-    this.cancel = this.cancel.bind(this);
     this.moveGroupUp = this.moveGroupUp.bind(this);
     this.moveGroupDown = this.moveGroupDown.bind(this);
     this.parametersChanged = this.parametersChanged.bind(this);
@@ -22,6 +19,7 @@ export class BookmarksVM {
     this.createBookmark = this.createBookmark.bind(this);
     this.updateBookmark = this.updateBookmark.bind(this);
     this.deleteBookmark = this.deleteBookmark.bind(this);
+    this.reorderGroupsBookmarks = this.reorderGroupsBookmarks.bind(this);
 
     this.init(parameters);
   }
@@ -102,6 +100,33 @@ export class BookmarksVM {
 
   get group() {
     return this._selectedGroup;
+  }
+
+  async reorderGroupsBookmarks(data) {
+    let groupIds = data.groups.map(elem => elem.id);
+    let bookmarkIds = data.bookmarks.map(elem => elem.id);
+    let container = this._selectedGroup || this._selectedTree;
+
+    console.log(groupIds);
+    console.log(bookmarkIds);
+    console.log(container);
+
+    container.groupIds = groupIds;
+    container.bookmarkIds = bookmarkIds;
+    
+    await this._ps.oneshot({action: 'persistObjects', objects: [container]});
+    this._ps.publish({
+      type: 'broadcast',
+      action: 'userMessage',
+      message: {
+        type: 'success',
+        text: `Updated group and bookmark order of ${container.type} "${container.name}".`
+      }
+    });
+    this.init({
+      treeId: this._selectedTree.id,
+      groupId: this._selectedGroup ? this._selectedGroup.id : null
+    });
   }
 
   async deleteGroup(data) {
@@ -338,45 +363,6 @@ export class BookmarksVM {
 
   parametersChanged(parameters) {
     this.init(parameters);
-  }
-
-  ok() {
-    if (this._mode == 'reorder') {
-      let container = this._selectedGroup || this._selectedTree;
-      let requestId = this._uuid();
-      let token = this._ps.subscribe({
-        type: 'response',
-        action: 'persistObjects',
-        id: requestId
-      }, function(res) {
-        this._ps.unsubscribe(token);
-
-        if (this._selectedGroup) {
-          this._selectedGroup = res.objects[0];
-        } else if (this._selectedTree) {
-          this._selectedTree = res.objects[0];
-        }
-
-        this._mode = 'view';
-      }.bind(this));
-
-      this._mode = 'working';
-
-      this._ps.publish({
-        type: 'request',
-        action: 'persistObjects',
-        id: requestId,
-        objects: [container]
-      });
-    }
-  }
-
-  cancel() {
-    this._mode = 'view';
-  }
-
-  switchToReorderMode() {
-    this._mode = 'reorder';
   }
 
   _requestGroups() {
