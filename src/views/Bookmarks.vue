@@ -5,6 +5,7 @@
       color="primary"
       dark
     >
+      <v-toolbar-title>more-bookmarks</v-toolbar-title>
       <v-spacer></v-spacer>
       <TreeSelect
         :trees="vm.trees"
