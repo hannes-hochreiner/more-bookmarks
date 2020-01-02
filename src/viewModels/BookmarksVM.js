@@ -107,10 +107,6 @@ export class BookmarksVM {
     let bookmarkIds = data.bookmarks.map(elem => elem.id);
     let container = this._selectedGroup || this._selectedTree;
 
-    console.log(groupIds);
-    console.log(bookmarkIds);
-    console.log(container);
-
     container.groupIds = groupIds;
     container.bookmarkIds = bookmarkIds;
     
