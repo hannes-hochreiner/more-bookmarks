@@ -1,5 +1,6 @@
-import {BookmarksVM} from './viewModels/BookmarksVM';
-import {MessagesVM} from './viewModels/MessagesVM';
+import { BookmarksVM } from './viewModels/BookmarksVM';
+import { MessagesVM } from './viewModels/MessagesVM';
+import { AuthenticationVM } from './viewModels/AuthenticationVM';
 
 export class ViewModelFactory {
   constructor(psf, uuid) {
@@ -12,6 +13,8 @@ export class ViewModelFactory {
       return new BookmarksVM(this._psf.createInstance(), this._uuid, parameters);
     } else if (className === 'messages') {
       return new MessagesVM(this._psf.createInstance(), this._uuid);
+    } else if (className === 'authentication') {
+      return new AuthenticationVM(this._psf.createInstance(), this._uuid, parameters);
     }
   }
 }

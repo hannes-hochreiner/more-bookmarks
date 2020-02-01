@@ -8,6 +8,7 @@ import {PubSub, PubSubFactory} from './PubSub';
 import {ViewModelFactory} from './ViewModelFactory';
 import {MessageViewerConsole} from './MessageViewerConsole';
 import RepositoryWorker from 'worker-loader!./RepositoryWorker';
+import {default as AuthenticationService} from './AuthenticationService';
 
 let ps = new PubSub('net.hochreiner.more-bookmarks', uuid);
 
@@ -22,8 +23,12 @@ Vue.use((Vue) => {
 
 new MessageViewerConsole();
 new RepositoryWorker();
+new AuthenticationService();
 
-awaitInitRepo(ps).then(() => {
+Promise.all([
+  awaitInitRepo(ps),
+  awaitInitAuthentication(ps)
+]).then(() => {
   new Vue({
     router,
     vuetify,
@@ -34,6 +39,15 @@ awaitInitRepo(ps).then(() => {
 function awaitInitRepo(ps) {
   return new Promise(resolve => {
     let token = ps.subscribe({action: 'repositoryReady', type: 'broadcast'}, () => {
+      ps.unsubscribe(token);
+      resolve();
+    });
+  });
+}
+
+function awaitInitAuthentication(ps) {
+  return new Promise(resolve => {
+    let token = ps.subscribe({action: 'authenticationReady', type: 'broadcast'}, () => {
       ps.unsubscribe(token);
       resolve();
     });
