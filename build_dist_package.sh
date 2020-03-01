@@ -1,2 +1,2 @@
 cd dist
-zip -r ../more-bookmarks-`node -p "require('../package.json').version"`.zip .
+zip -r ../more-bookmarks-v`node -p "require('../package.json').version"`.zip .
