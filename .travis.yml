@@ -1,12 +1,12 @@
 language: node_js
 node_js:
-  - node
-before_deploy: ./build_dist_package.sh
+- node
+before_deploy: "./build_dist_package.sh"
 deploy:
   provider: releases
   api_key:
-    secure: $GITHUB_TOKEN
-  file: more-bookmarks-$TRAVIS_TAG.zip
+    secure: TAeK61PVEnK+mftrAV+GxD4UfSBXHJS4Rlf0E+fu0jktZOAOXxEdsJHWbBX6mPdyREnaTo1uHV4Bhg2zXH1KoWiAtv6LNFc/WXZou8QDX4iuqJQupW2XaPy1K7ofPvo0S8rRGE7bzVR3F1C4qtZr2X+8XYZAFM/i4Doig3p8PS1hcHZe+PY5yFEsDItdvBIgjnF7e9P7YoUUY4U7ffNmeZ9y5EOVeEVCaRYyWVKeJsbtXlv3UI7F20KB5HTAi6oZakdxRtNvIA5amiBvtzi2nUaKIYrv5Sq2uiPHkU9a7DwqTRBuooF2QgBKNYrFYlHkyFlUpGqkW5SmqS8U/XWxTClkQeZjNHyX3k8a25ZW0qELLHhhcKDlTbd+54ufi6YYXn9ufeOtaYLZSm3eILUSqYc0ylY8T+Q0X8wr6F0nOCLb+Zv5VeXSpo9URItohDicXmjW8dmIcEZjXwCxYmY5AcnVF3Hv4+Q4ZyjPcZaY0tlm0nfdjC0ds5xwB5PuBthHPVnKEk40VALKWlqmE4G7qDl42ryBGpW+8iQSIIGsuGofA142/VoQqaiFgJyWU5P0r45i/7uKzr+e7ovEKhkD8vAYMKt3/QRSH5KM2/qUU8/c8Wle6tteLOcmrJ9IV658lMDd54/+/bCGDD20iegMOobbETfFhK2fAC/9603qcOA=
+  file: ./more-bookmarks-$TRAVIS_TAG.zip
   skip_cleanup: true
   on:
     tags: true
