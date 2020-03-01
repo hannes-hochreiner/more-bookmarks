@@ -12,5 +12,12 @@ module.exports = {
         maxSize: 250000,
       }
     }
+  },
+  devServer: {
+    proxy: {
+      '^/api': {
+        target: 'https://bookmark.hochreiner.net'
+      }
+    }
   }
 }

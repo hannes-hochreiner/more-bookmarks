@@ -5,8 +5,22 @@ export class Authentication {
     this._ps.subscribe({type: 'request', action: 'login'}, this._login.bind(this));
     // // this._ps.subscribe({type: 'request', action: 'logout'}, this._logout.bind(this));
     this._ps.subscribe({type: 'request', action: 'isAuthenticated'}, this._isAuthenticated.bind(this));
+    this._ps.subscribe({type: 'request', action: 'getIdToken'}, this._getIdToken.bind(this));
 
     this._ps.publish({type: 'broadcast', action: 'authenticationReady'});
+  }
+
+  async _getIdToken(req) {
+    req.type = 'response';
+
+    try {
+      let user = await this._auth.currentAuthenticatedUser();
+      req.idToken = user.signInUserSession.idToken.jwtToken;
+    } catch (error) {
+      req.error = error;
+    }
+
+    this._ps.publish(req);
   }
 
   async _isAuthenticated(req) {

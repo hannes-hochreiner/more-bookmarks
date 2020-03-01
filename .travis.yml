@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - node
+before_deploy: ./build_dist_package.sh
+deploy:
+  provider: releases
+  api_key:
+    secure: $GITHUB_TOKEN
+  file: more-bookmarks-$TRAVIS_TAG.zip
+  skip_cleanup: true
+  on:
+    tags: true
