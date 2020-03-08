@@ -1,6 +1,7 @@
 export class MessagesVM {
   constructor(ps, uuid) {
     this._ps = ps;
+    this._psTokens = [];
     this._uuid = uuid;
     this._messages = [];
     this._show = false;
@@ -8,7 +9,7 @@ export class MessagesVM {
     this._type = '';
     this._timeout = 0;
 
-    this._ps.subscribe({type: 'broadcast', action: 'userMessage'}, function(data) {
+    this._psTokens.push(this._ps.subscribe({type: 'broadcast', action: 'userMessage'}, function(data) {
       let msg = data.message;
 
       msg.timeout = 3000;
@@ -19,9 +20,13 @@ export class MessagesVM {
 
       this._messages.push(msg);
       this.nextMessage();
-    }.bind(this));
+    }.bind(this)));
 
     this.nextMessage = this.nextMessage.bind(this);
+  }
+
+  destruct() {
+    this._psTokens.forEach(token => this._ps.unsubscribe(token));
   }
 
   get text() {

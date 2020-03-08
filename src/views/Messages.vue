@@ -17,5 +17,9 @@ export default {
   created: function() {
     this.vm = this.$vmf.createViewModel('messages');
   },
+  beforeDestroy: function() {
+    this.vm.destruct();
+    delete this.vm;
+  }
 };
 </script>

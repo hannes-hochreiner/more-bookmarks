@@ -1,6 +1,7 @@
 export class AuthenticationVM {
   constructor(ps, uuid) {
     this._ps = ps;
+    this._psTokens = [];
     this._uuid = uuid;
     this._password = '';
     this._newPassword = '';
@@ -10,7 +11,11 @@ export class AuthenticationVM {
 
     this.login = this.login.bind(this);
     this.setNewPassword = this.setNewPassword.bind(this);
-    this._ps.subscribe({type: 'request', action: 'getNewPassword'}, this.startGettingNewPassword.bind(this));
+    this._psTokens.push(this._ps.subscribe({type: 'request', action: 'getNewPassword'}, this.startGettingNewPassword.bind(this)));
+  }
+
+  destruct() {
+    this._psTokens.forEach(token => this._ps.unsubscribe(token));
   }
 
   startGettingNewPassword(req) {

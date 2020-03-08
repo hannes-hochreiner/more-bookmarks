@@ -1,14 +1,15 @@
 export class BookmarksVM {
   constructor(ps, uuid, parameters) {
     this._ps = ps;
+    this._psTokens = [];
     this._uuid = uuid;
 
-    this._ps.subscribe({type: 'response', action: 'bookmarksByIds'}, function(data) {
+    this._psTokens.push(this._ps.subscribe({type: 'response', action: 'bookmarksByIds'}, function(data) {
       this._bookmarks = data.result;
-    }.bind(this));
-    this._ps.subscribe({type: 'response', action: 'groupsByIds'}, function(data) {
+    }.bind(this)));
+    this._psTokens.push(this._ps.subscribe({type: 'response', action: 'groupsByIds'}, function(data) {
       this._groups = data.result;
-    }.bind(this));
+    }.bind(this)));
 
     this.moveGroupUp = this.moveGroupUp.bind(this);
     this.moveGroupDown = this.moveGroupDown.bind(this);
@@ -24,6 +25,10 @@ export class BookmarksVM {
     this.init(parameters);
   }
 
+  destruct() {
+    this._psTokens.forEach(token => this._ps.unsubscribe(token));
+  }
+
   async init(parameters) {
     this._trees = [];
     this._selectedTree = null;
@@ -32,17 +37,38 @@ export class BookmarksVM {
     this._bookmarks = [];
     this._parent = null;
     this._mode = 'init';
+  
+    let user = (await this._ps.oneshot({
+      action: 'getUser'
+    })).user;
 
     let res = await this._ps.oneshot({
       action: 'treesByUserId',
-      userId: '1'
+      userId: user.id
     });
 
     this._trees = res.result;
+
+    if (this._trees.length == 0) {
+      let res = await this._ps.oneshot({
+        action: 'persistObjects',
+        objects: [{
+          type: 'tree',
+          sharedWith: [user.id],
+          id: this._uuid(),
+          name: `bookmarks: ${user.name}`,
+          groupIds: [],
+          bookmarkIds: []
+        }]
+      });
+
+      this._trees.push(res.objects[0]);
+    }
+
     this._selectedTree = this._trees.find(elem => elem.id == parameters.treeId);
 
     if (!this._selectedTree) {
-      this._selectedTree = this._trees.find(function(elem) { return elem.default; });
+      this._selectedTree = this._trees[0];
     }
 
     if (parameters.groupId) {
@@ -362,6 +388,10 @@ export class BookmarksVM {
   }
 
   _requestGroups() {
+    if (!this._selectedTree) {
+      return;
+    }
+
     let groupIds, treeId;
 
     if (!this._selectedGroup) {
@@ -385,6 +415,10 @@ export class BookmarksVM {
   }
 
   _requestBookmarks() {
+    if (!this._selectedTree) {
+      return;
+    }
+
     let bookmarkIds, treeId;
 
     if (!this._selectedGroup) {

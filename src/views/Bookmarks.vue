@@ -77,6 +77,10 @@ export default {
   created: function() {
     this.vm = this.$vmf.createViewModel('bookmarks', this.$route.params);
   },
+  beforeDestroy: function() {
+    this.vm.destruct();
+    delete this.vm;
+  },
   watch: {
     '$route': 'parametersChanged'
   },

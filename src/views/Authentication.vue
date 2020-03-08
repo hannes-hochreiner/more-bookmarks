@@ -53,6 +53,10 @@ export default {
   },
   created: function() {
     this.vm = this.$vmf.createViewModel('authentication', this.$route.params);
+  },
+  beforeDestroy: function() {
+    this.vm.destruct();
+    delete this.vm;
   }
 };
 </script>
