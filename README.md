@@ -1,3 +1,4 @@
+![CI](https://github.com/hannes-hochreiner/more-bookmarks/workflows/CI/badge.svg)
 # more-bookmarks
 
 This is a simple bookmarking app I wrote to scratch a personal itch.
